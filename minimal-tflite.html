@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JAX-MD Web Test (with tflite)</title>
+    <!-- <script src="add-coop-coep-headers.js"></script> -->
+  </head>
+  <body>
+    <style>
+      body * {
+        font-family: monospace;
+      }
+    </style>
+    <div>See browser console.</div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-cpu"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite/dist/tf-tflite.min.js"></script>
+    
+    <script type="module">
+      const initFn = await tflite.loadTFLiteModel('./init_fn_raw.tflite');
+      const applyFn = await tflite.loadTFLiteModel('./apply_fn_raw.tflite');
+      
+      let state = initFn.predict(tf.ones([128,2]));
+      console.log(state.dataSync());
+
+      for(let i = 0; i < 10; i++) {
+        state = applyFn.predict(state);
+        console.log(state.dataSync());
+      }
+    </script>
+  </body>
+</html>
